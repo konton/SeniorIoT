@@ -37,22 +37,17 @@
 /* 3. Define the RTDB URL */
 #define DATABASE_URL "fluted-arch-341414-default-rtdb.asia-southeast1.firebasedatabase.app" //<databaseName>.firebaseio.com or <databaseName>.<region>.firebasedatabase.app
 
-/* 4. Define the user Email and password that alreadey registerd or added in your project */
-#define USER_EMAIL "USER_EMAIL"
-#define USER_PASSWORD "USER_PASSWORD"
+
 
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseJsonArray arr; // you can add or set the array data
-FirebaseJsonArray arr2;
 FirebaseConfig config;
 
 
 unsigned long sendDataPrevMillis = 0;
 unsigned long sendDataPrevMillis1 = 0;
 bool signupOK = false;
-int irArray[750];
-int irArray2[500];
 
 
 #define DEBUG                                           // Uncomment for debug output to the Serial stream
@@ -112,7 +107,6 @@ void setup() {
   tempSensor.begin();  
   particleSensor.begin();         // Use default I2C port, 400kHz speed
   particleSensor.setSamplingRate(particleSensor.SAMPLING_RATE_100SPS);
-//  particleSensor.setup();  
   while(!tempSensor.scanAvailableSensors()){
     Serial.println("Couldn't find the temperature sensor, please connect the sensor." );
     delay(30000);
@@ -131,16 +125,16 @@ void setup() {
   maxim_max30102_read_reg(0xFF, &partID);
 
 
-  if ( Firebase.deleteNode(fbdo,"Red/value")) {
-    Serial.println ("Successfully deleted node at:");
-    Serial.println ("Red");
-   }
-   else{
-    Serial.println ("Error deleteing data at:");
-    Serial.println ("Red");
-    Serial.println(fbdo.errorReason());
-  } 
-    delay(3000);
+//  if ( Firebase.deleteNode(fbdo,"Red/value")) {
+//    Serial.println ("Successfully deleted node at:");
+//    Serial.println ("Red");
+//   }
+//   else{
+//    Serial.println ("Error deleteing data at:");
+//    Serial.println ("Red");
+//    Serial.println(fbdo.errorReason());
+//  } 
+//    delay(3000);
   
 }
 
@@ -149,7 +143,6 @@ void loop() {
   
   processIR();
   processHRandSPO2();
-//  delay(5000);
   delay(10000);
 
 }
@@ -219,7 +212,8 @@ void processHRandSPO2(){
       }
     
       //calculate heart rate and SpO2 after BUFFER_SIZE samples (ST seconds of samples) using Robert's method
-      rf_heart_rate_and_oxygen_saturation(aun_ir_buffer, BUFFER_SIZE, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid, &ratio, &correl); 
+      rf_heart_rate_and_oxygen_saturation(aun_ir_buffer, BUFFER_SIZE, aun_red_buffer, &n_spo2, &ch_spo2_valid, 
+      &n_heart_rate, &ch_hr_valid, &ratio, &correl); 
    
       float temp = tempSensor.getTemperature(); // read temperature for every 100ms;
       if (Firebase.ready() && (millis() - sendDataPrevMillis > 15000 || sendDataPrevMillis == 0))
