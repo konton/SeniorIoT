@@ -216,6 +216,8 @@ void processHRandSPO2(){
       &n_heart_rate, &ch_hr_valid, &ratio, &correl); 
    
       float temp = tempSensor.getTemperature(); // read temperature for every 100ms;
+      float hr_cali = (0.7504*n_heart_rate)+21.255;
+      float spo2_cali = (((n_spo2-95.59)*4)/4.37)+96;
       if (Firebase.ready() && (millis() - sendDataPrevMillis > 15000 || sendDataPrevMillis == 0))
         {
           sendDataPrevMillis = millis();
@@ -229,7 +231,7 @@ void processHRandSPO2(){
         
           if(ceil(n_spo2) != -999){
             
-            if(Firebase.RTDB.setString(&fbdo, "Sensor/spo2/data", ceil(n_spo2))){
+            if(Firebase.RTDB.setString(&fbdo, "Sensor/spo2/data", ceil(spo2_cali))){
               Serial.println("Successfully save SPO2");
             }else{
               Serial.println("Failed"+fbdo.errorReason());
@@ -238,7 +240,7 @@ void processHRandSPO2(){
           }
           
          if(ceil(n_heart_rate)!= -999){
-            if(Firebase.RTDB.setString(&fbdo, "Sensor/hr/data", ceil(n_heart_rate))){
+            if(Firebase.RTDB.setString(&fbdo, "Sensor/hr/data", ceil(hr_cali))){
               Serial.println("Successfully save HR");
             }else{
               Serial.println("Failed"+fbdo.errorReason());
